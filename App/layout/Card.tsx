@@ -8,7 +8,7 @@ const Card: React.FC<{
   <View
     style={{
       ...styles.card,
-      width: props.width ?? "90%",
+      width: props.width ?? "85%",
       height: props.height,
     }}
   >
@@ -18,6 +18,7 @@ const Card: React.FC<{
 
 const styles = StyleSheet.create({
   card: {
+    display: 'flex',
     paddingVertical: 16,
     elevation: 5,
     borderRadius: 15,
