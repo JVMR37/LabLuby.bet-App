@@ -6,19 +6,23 @@ import Card from "../layout/Card";
 import { TextInput } from "react-native-paper";
 import { globalStyles } from "../styles/global.style";
 import { Button } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
+import TitlePageComponent from "../components/TitlePageComponent";
+import { appColors } from "../styles/appTheme";
+import Footer from "../layout/footer";
+import AuthPagesContainer from "../layout/AuthPageContainer";
 
 const LoginPage: React.FC = () => {
   const [text, setText] = React.useState("");
 
   return (
-    <View style={styles.container}>
+    <AuthPagesContainer>
       <LogoComponent />
-      <Text>Autentication</Text>
+      <TitlePageComponent title="Authentication" />
       <Card>
         <TextInput
           label="Email"
           value={text}
+          onBlur={() => console.log("blur")}
           mode="flat"
           style={globalStyles.textInput}
           onChangeText={(text) => setText(text)}
@@ -30,35 +34,88 @@ const LoginPage: React.FC = () => {
           style={globalStyles.textInput}
           right={<TextInput.Icon name="eye" />}
         />
+        <View
+          style={{
+            marginVertical: 8,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            onPress={() => console.log("pressed")}
+            mode="text"
+            uppercase={false}
+            labelStyle={{
+              fontSize: 16,
+              fontWeight: "bold",
+              fontStyle: "italic",
+              color: "#c1c1c1",
+            }}
+            color={appColors.secondary}
+          >
+            <Text>I forget my password</Text>
+          </Button>
+        </View>
 
-        <Button>
-          <Text>Log In</Text>
-          <Ionicons name={"md-refresh"} size={24} />
-        </Button>
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <Button
+            onPress={() => console.log("pressed")}
+            icon="arrow-right"
+            uppercase={false}
+            style={{
+              marginVertical: 16,
+            }}
+            labelStyle={{
+              fontSize: 32,
+              fontWeight: "bold",
+              fontStyle: "italic",
+            }}
+            contentStyle={{
+              flexDirection: "row-reverse",
+            }}
+          >
+            <Text>Log In</Text>
+          </Button>
+        </View>
       </Card>
-      <Button>
-        <Text>Log In</Text>
-        <Ionicons name={"md-refresh"} size={24} />
-      </Button>
-      <Text
+      <Button
+        onPress={() => console.log("pressed")}
+        mode="text"
         style={{
-          position: "absolute",
-          bottom: 16,
+          marginVertical: 28,
         }}
+        icon="arrow-right"
+        uppercase={false}
+        contentStyle={{
+          flexDirection: "row-reverse",
+        }}
+        labelStyle={{
+          fontSize: 32,
+          fontWeight: "bold",
+          fontStyle: "italic",
+        }}
+        color={appColors.secondary}
       >
-        Copyright 2020 Luby Software
-      </Text>
+        <Text>Sign up</Text>
+      </Button>
+      <Footer />
       <StatusBar style="auto" />
-    </View>
+    </AuthPagesContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    minHeight: "100%",
   },
 });
 
