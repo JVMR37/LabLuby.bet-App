@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.2",
+    "@react-navigation/native-stack": "^6.1.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/react-redux": "^7.1.18",
     "@types/styled-components-react-native": "^5.1.1",
