@@ -10,9 +10,27 @@ import TitlePageComponent from "../components/TitlePageComponent";
 import { appColors } from "../styles/appTheme";
 import Footer from "../layout/footer";
 import AuthPagesContainer from "../layout/AuthPageContainer";
+import { emailValidator, passValidator } from "../utils/validators";
+import useInput from "../hooks/use-input";
 
-const LoginPage: React.FC = () => {
-  const [text, setText] = React.useState("");
+const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const {
+    value: emailValue,
+    isValid: emailIsValid,
+    hasError: emailHasError,
+    valueChangeHandler: emailChangeHandler,
+    inputBlurHandler: emailBlurHandler,
+    reset: resetEmail,
+  } = useInput(emailValidator);
+
+  const {
+    value: passValue,
+    isValid: passIsValid,
+    hasError: passHasError,
+    valueChangeHandler: passChangeHandler,
+    inputBlurHandler: passBlurHandler,
+    reset: resetPass,
+  } = useInput(passValidator);
 
   return (
     <AuthPagesContainer>
@@ -21,15 +39,20 @@ const LoginPage: React.FC = () => {
       <Card>
         <TextInput
           label="Email"
-          value={text}
-          onBlur={() => console.log("blur")}
+          value={emailValue}
+          error={emailHasError}
+          onBlur={emailBlurHandler}
           mode="flat"
           style={globalStyles.textInput}
-          onChangeText={(text) => setText(text)}
+          onChangeText={emailChangeHandler}
         />
 
         <TextInput
           label="Password"
+          value={passValue}
+          error={passHasError}
+          onChangeText={passChangeHandler}
+          onBlur={passBlurHandler}
           secureTextEntry
           style={globalStyles.textInput}
           right={<TextInput.Icon name="eye" />}
@@ -44,7 +67,7 @@ const LoginPage: React.FC = () => {
           }}
         >
           <Button
-            onPress={() => console.log("pressed")}
+            onPress={() => navigation.navigate("ResetPassword")}
             mode="text"
             uppercase={false}
             labelStyle={{
@@ -85,7 +108,7 @@ const LoginPage: React.FC = () => {
         </View>
       </Card>
       <Button
-        onPress={() => console.log("pressed")}
+        onPress={() => navigation.navigate("Signup")}
         mode="text"
         style={{
           marginVertical: 28,
