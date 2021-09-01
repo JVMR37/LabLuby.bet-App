@@ -7,14 +7,14 @@ const useInput = (validateValue: Function, passConfirmValue?: string) => {
   const valueIsValid = !passConfirmValue
     ? validateValue(enteredValue)
     : validateValue(enteredValue, passConfirmValue);
-    
+
   const hasError = !valueIsValid && isTouched;
 
-  const valueChangeHandler = (event: any) => {
-    setEnteredValue(event.target.value);
+  const valueChangeHandler = (text: string) => {
+    setEnteredValue(text);
   };
 
-  const inputBlurHandler = (event: any) => {
+  const inputBlurHandler = () => {
     setIsTouched(true);
   };
 
