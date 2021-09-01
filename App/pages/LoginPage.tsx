@@ -12,6 +12,14 @@ import Footer from "../layout/footer";
 import AuthPagesContainer from "../layout/AuthPageContainer";
 import { emailValidator, passValidator } from "../utils/validators";
 import useInput from "../hooks/use-input";
+import {
+  login,
+  updateAuthStatusAfterTime,
+  AuthStatus,
+  selectAuthStatusValue,
+} from "../store/authSlice";
+
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 
 const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
   const {
@@ -31,6 +39,29 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
     inputBlurHandler: passBlurHandler,
     reset: resetPass,
   } = useInput(passValidator);
+
+  const dispatch = useAppDispatch();
+  const authStatus = useAppSelector(selectAuthStatusValue);
+
+  const formIsValid = passIsValid && emailIsValid;
+
+  const submitHandler = async () => {
+    if (!formIsValid) {
+      return;
+    }
+
+    const result = await dispatch(
+      login({ email: emailValue, password: passValue })
+    );
+
+    if (result.meta.requestStatus === "rejected") {
+      dispatch(updateAuthStatusAfterTime(AuthStatus.IDLE));
+    } else if (result.meta.requestStatus === "fulfilled") {
+      navigation.replace("Home");
+    }
+
+    console.log("Submitted!");
+  };
 
   return (
     <AuthPagesContainer>
@@ -88,7 +119,7 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
           }}
         >
           <Button
-            onPress={() => console.log("pressed")}
+            onPress={submitHandler}
             icon="arrow-right"
             uppercase={false}
             style={{
