@@ -1,13 +1,14 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
 import LogoComponent from "../components/LogoComponent";
-import { IconButton, Appbar } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import { useAppDispatch } from "../hooks/hooks";
 import { useMountEffect } from "../hooks/use-mount-effect";
 import { logout } from "../store/authSlice";
 import { loadGames, loadSavedBets } from "../store/gamesSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { appColors } from "../styles/appTheme";
 
 const AppScaffold: React.FC = (props) => {
   const dispatch = useAppDispatch();
@@ -31,7 +32,11 @@ const AppScaffold: React.FC = (props) => {
         }}
       >
         <LogoComponent fontSize={28} />
-        <IconButton icon="logout" onPress={logoutButtonHandler}></IconButton>
+        <IconButton
+          icon="logout"
+          color={appColors.secondary}
+          onPress={logoutButtonHandler}
+        ></IconButton>
       </View>
       <View style={styles.appContent}>{props.children}</View>
       <View style={styles.row}></View>
