@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Dimensions } from "react-native";
 
 import AppScaffold from "../layout/AppScaffold";
-import TitlePageComponent from "../components/TitlePageComponent";
 import { globalStyles } from "../styles/global.style";
 import GameOutlineButton from "../components/GameOutlineButton";
 import { useAppSelector, useAppDispatch } from "../hooks/hooks";
@@ -13,8 +13,11 @@ import {
   getGameFilter,
 } from "../store/gamesSlice";
 import Game from "../models/Game";
+import RecentGamesComponent from "../components/RecentGamesComponent";
 
 const HomePage: React.FC = () => {
+  const windowWidth = Dimensions.get("window").width;
+
   const dispatch = useAppDispatch();
   const games = useAppSelector(selectAvailableGames) as Array<Game>;
   const filter = useAppSelector(getGameFilter);
@@ -52,16 +55,27 @@ const HomePage: React.FC = () => {
     <AppScaffold>
       <Text style={{ ...globalStyles.titlePage }}>Recent Games</Text>
       <Text>Filters</Text>
-      <View style={styles.filterButtonsRow}>{filterButtonsElements}</View>
+      <ScrollView
+        style={{ minWidth: '100%' }}
+        contentContainerStyle={styles.filterButtonsRow}
+        horizontal
+      >
+        {filterButtonsElements}
+      </ScrollView>
+      <View style={{ height: "75%" }}>
+        <RecentGamesComponent />
+      </View>
     </AppScaffold>
   );
 };
 
 const styles = StyleSheet.create({
   filterButtonsRow: {
-    marginVertical: 8,
+    minWidth: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    overflow: "scroll",
   },
 });
 
