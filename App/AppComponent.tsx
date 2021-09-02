@@ -6,19 +6,12 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
-import { useAppSelector, useAppDispatch } from "./hooks/hooks";
-import { useMountEffect } from "./hooks/use-mount-effect";
+import { useAppSelector } from "./hooks/hooks";
 import { selectIsLoggedInValue, loadAuthState } from "./store/authSlice";
 
 const Stack = createNativeStackNavigator();
 
 const AppComponent: React.FC = () => {
-  const dispatch = useAppDispatch();
-
-  useMountEffect(() => {
-    dispatch(loadAuthState());
-  });
-
   const isLoggedIn = useAppSelector(selectIsLoggedInValue);
   return (
     <NavigationContainer>
@@ -55,7 +48,14 @@ const AppComponent: React.FC = () => {
           </>
         ) : (
           // User is signed in
-          <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen
+            name="Home"
+            component={HomePage}
+            options={{
+              headerShown: false,
+              animationTypeForReplace: isLoggedIn ? "pop" : "push",
+            }}
+          />
         )}
       </Stack.Navigator>
     </NavigationContainer>
