@@ -6,11 +6,17 @@ import {
   LogoTextStyled,
 } from "../styles/LogoComponent.style";
 
-export default function LogoComponent() {
+const LogoComponent: React.FC<{ fontSize?: number }> = (props) => {
   return (
     <LogoContainer>
-      <LogoTextStyled>TGL</LogoTextStyled>
+      <LogoTextStyled
+        style={props.fontSize ? { fontSize: props.fontSize } : null}
+      >
+        TGL
+      </LogoTextStyled>
       <LogoLine />
     </LogoContainer>
   );
-}
+};
+
+export default LogoComponent;
