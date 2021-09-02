@@ -1,17 +1,5 @@
 import { DefaultTheme } from "react-native-paper";
 
-export const appTheme = {
-  ...DefaultTheme,
-  roundness: 15,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: "#b5c401",
-    background: "#F7F7F7",
-    error: "#bf2424",
-    accent: "#ddf000",
-  },
-};
-
 export const appColors = {
   primary: "#B5C401",
   secondary: "#707070",
@@ -21,4 +9,17 @@ export const appColors = {
   error: "#bf2424",
   card: "#FFFFFF",
   accent: "#ddf000",
+};
+
+export const appTheme = {
+  ...DefaultTheme,
+  roundness: 15,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: appColors.primary,
+    background: appColors.background,
+    text: appColors.secondary,
+    error: appColors.error,
+    accent: appColors.accent,
+  },
 };
