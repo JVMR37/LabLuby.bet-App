@@ -1,4 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { REHYDRATE } from "redux-persist";
+
 import { RootState } from ".";
 import {
   loginInAPI,
@@ -189,6 +191,10 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(REHYDRATE, (state, action: any) => {
+      ApiDatasource.Instance.setToken(action.payload.auth.userToken!);
+    });
+
     builder.addCase(login.pending, (state, action) => {
       state.status = AuthStatus.Loading;
     });
@@ -226,8 +232,6 @@ export const authSlice = createSlice({
         state.userEmail = user.email;
 
         state.updateStatus = UpdateStatus.Success;
-
-        localStorage.setItem("@tgl-app/auth", JSON.stringify(state));
       }
     });
 
