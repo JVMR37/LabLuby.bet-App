@@ -1,6 +1,6 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import LogoComponent from "../components/LogoComponent";
 import { IconButton } from "react-native-paper";
 import { useAppDispatch } from "../hooks/hooks";
@@ -9,6 +9,30 @@ import { logout } from "../store/authSlice";
 import { loadGames, loadSavedBets } from "../store/gamesSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { appColors } from "../styles/appTheme";
+import NavigationBar from "./NavigationBar";
+
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomePage from "../pages/HomePage";
+import GamePage from "../pages/GamePage";
+import AccountPage from "../pages/AccountPage";
+
+const Tab = createBottomTabNavigator();
+
+function HomeScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Home!</Text>
+    </View>
+  );
+}
+
+function SettingsScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Settings!</Text>
+    </View>
+  );
+}
 
 const AppScaffold: React.FC = (props) => {
   const dispatch = useAppDispatch();
@@ -38,8 +62,18 @@ const AppScaffold: React.FC = (props) => {
           onPress={logoutButtonHandler}
         ></IconButton>
       </View>
-      <View style={styles.appContent}>{props.children}</View>
-      <View style={styles.row}></View>
+      {/* <ScrollView contentContainerStyle={styles.appContent}> */}
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        tabBar={(props) => <NavigationBar {...props} />}
+      >
+        <Tab.Screen name="Home" component={HomePage} />
+        <Tab.Screen name="Game" component={GamePage} />
+        <Tab.Screen name="Account" component={AccountPage} />
+      </Tab.Navigator>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };
@@ -47,6 +81,8 @@ const AppScaffold: React.FC = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: appColors.background,
+
     // marginTop: StatusBar.currentHeight,
   },
   row: {
@@ -61,7 +97,8 @@ const styles = StyleSheet.create({
   },
   appContent: {
     marginTop: 20,
-    marginBottom: 32,
+    marginBottom: 0,
+    paddingBottom: 50,
     marginHorizontal: 16,
   },
 });
