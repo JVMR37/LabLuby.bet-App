@@ -23,7 +23,7 @@ export interface GameState {
   status: GameStatus;
   savedGames: Array<SavedGame>;
   gamePagination?: PaginationMetadata;
-  filterGame: string;
+  filterGame: Array<string>;
 }
 
 const initialState: GameState = {
@@ -31,12 +31,12 @@ const initialState: GameState = {
   selectedNumbers: [],
   savedGames: [],
   status: GameStatus.IDLE,
-  filterGame: "",
+  filterGame: [],
 };
 
 interface FetchBetsProps {
   page: number;
-  filter?: string;
+  filters?: Array<string>;
 }
 
 export const loadGames = createAsyncThunk(
@@ -55,7 +55,7 @@ export const loadGames = createAsyncThunk(
 export const loadSavedBets = createAsyncThunk(
   "auth/loadSavedBets",
   async (props: FetchBetsProps, thunkApi) => {
-    const response = await fetchSavedBets(props.page, props.filter);
+    const response = await fetchSavedBets(props.page, props.filters);
     console.log(response);
 
     if (response instanceof Error) {
@@ -128,7 +128,7 @@ const gameSlice = createSlice({
       }
     },
 
-    selectFilter: (state, action: PayloadAction<string>) => {
+    selectFilter: (state, action: PayloadAction<Array<string>>) => {
       state.filterGame = action.payload;
     },
   },

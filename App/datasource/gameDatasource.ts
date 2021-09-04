@@ -20,12 +20,26 @@ export const fetchGames = async () => {
   });
 };
 
-export const fetchSavedBets = async (page: number = 1, filter?: string) => {
+export const fetchSavedBets = async (
+  page: number = 1,
+  filter?: Array<string>
+) => {
   return new Promise<{ data: SavedGame[]; meta: PaginationMetadata }>(
     (resolve, reject) => {
-      ApiDatasource.Instance.Axios.get(
-        `/bets?page=${page}${filter ? "&filter=" + filter : ""}`
-      )
+      let url: string = `/bets?page=${page}`;
+
+      if (filter && filter.length > 0) {
+        url += filter.reduce(
+          (acc, currentFilter) =>
+            acc === "&"
+              ? acc + "filter[]=" + currentFilter
+              : acc + "&filter[]=" + currentFilter,
+          "&"
+        );
+      }
+      console.log(url);
+
+      ApiDatasource.Instance.Axios.get(url)
         .then((response) => {
           console.log(response.data);
           const responseData = response.data.data.map((betsJson: any) =>
