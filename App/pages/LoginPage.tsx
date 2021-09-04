@@ -56,11 +56,7 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     if (result.meta.requestStatus === "rejected") {
       dispatch(updateAuthStatusAfterTime(AuthStatus.IDLE));
-    } else if (result.meta.requestStatus === "fulfilled") {
-      navigation.replace("Home");
     }
-
-    console.log("Submitted!");
   };
 
   return (
