@@ -5,9 +5,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import HomePage from "./pages/HomePage";
+
+import AppScaffold from "./layout/AppScaffold";
 import { useAppSelector } from "./hooks/hooks";
-import { selectIsLoggedInValue, loadAuthState } from "./store/authSlice";
+import { selectIsLoggedInValue } from "./store/authSlice";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +18,6 @@ const AppComponent: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator>
         {!isLoggedIn ? (
-          // No token found, user isn't signed in
           <>
             <Stack.Screen
               name="SignIn"
@@ -48,14 +48,16 @@ const AppComponent: React.FC = () => {
           </>
         ) : (
           // User is signed in
-          <Stack.Screen
-            name="Home"
-            component={HomePage}
-            options={{
-              headerShown: false,
-              animationTypeForReplace: isLoggedIn ? "pop" : "push",
-            }}
-          />
+          <>
+            <Stack.Screen
+              name="AppScaffold"
+              component={AppScaffold}
+              options={{
+                headerShown: false,
+                animationTypeForReplace: isLoggedIn ? "pop" : "push",
+              }}
+            />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
