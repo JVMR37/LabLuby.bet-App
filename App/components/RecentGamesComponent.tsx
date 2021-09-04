@@ -4,6 +4,7 @@ import { useAppSelector } from "../hooks/hooks";
 import SavedGame from "../models/SavedGame";
 import { getSavedGames } from "../store/gamesSlice";
 import { appColors } from "../styles/appTheme";
+import GamePagination from "./GamePagination";
 
 const RecentGamesComponent: React.FC = () => {
   const savedGames = useAppSelector(getSavedGames) as Array<SavedGame>;
@@ -48,12 +49,9 @@ const RecentGamesComponent: React.FC = () => {
   }, [savedGames])();
 
   return (
-    <ScrollView
-      style={{ minHeight: "100%" }}
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
-      {savedGamesElements}
-    </ScrollView>
+    <View style={{ minHeight: "100%", flexGrow: 1 }}>
+      <GamePagination>{savedGamesElements}</GamePagination>
+    </View>
   );
 };
 
