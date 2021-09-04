@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Dimensions } from "react-native";
 
 import AppScaffold from "../layout/AppScaffold";
 import { globalStyles } from "../styles/global.style";
@@ -14,58 +13,55 @@ import {
 } from "../store/gamesSlice";
 import Game from "../models/Game";
 import RecentGamesComponent from "../components/RecentGamesComponent";
-
+import PageContainer from "../layout/PageContainer";
 const HomePage: React.FC = () => {
-  const windowWidth = Dimensions.get("window").width;
-
   const dispatch = useAppDispatch();
   const games = useAppSelector(selectAvailableGames) as Array<Game>;
-  const filter = useAppSelector(getGameFilter);
+  const filters = useAppSelector(getGameFilter) as Array<string>;
   const filterButtonHandler = useCallback(
-    async (typeId: any) => {
-      console.log(typeId);
+    async (typeId: string) => {
+      const newFilters = Array.from(filters);
+      const typeIndex = newFilters.findIndex((value) => value == typeId);
+      console.log(typeIndex);
 
-      if (filter === typeId) {
-        dispatch(selectFilter(""));
-        dispatch(loadSavedBets({ page: 1 }));
+      if (typeIndex !== -1) {
+        newFilters.splice(typeIndex, 1);
       } else {
-        dispatch(loadSavedBets({ page: 1, filter: typeId.toString() }));
-
-        dispatch(selectFilter(typeId));
+        newFilters.push(typeId);
       }
+      dispatch(selectFilter(newFilters));
+      dispatch(loadSavedBets({ page: 1, filters: newFilters }));
     },
-    [dispatch, filter]
+    [dispatch, filters]
   );
 
-  const filterButtonsElements = useCallback(
-    () =>
-      games.map((game: Game) => (
-        <GameOutlineButton
-          key={game.id}
-          title={game.type}
-          isSelected={game.id.toString() == filter}
-          gameColor={game.color}
-          onPress={filterButtonHandler.bind(null, game.id)}
-        ></GameOutlineButton>
-      )),
-    [filter, filterButtonHandler, games]
-  )();
+  const filterButtonsElements = useCallback(() => {
+    console.log(filters);
+
+    return games.map((game: Game) => (
+      <GameOutlineButton
+        key={game.id}
+        title={game.type}
+        isSelected={filters.some((value) => value == game.id.toString())}
+        gameColor={game.color}
+        onPress={filterButtonHandler.bind(null, game.id.toString())}
+      ></GameOutlineButton>
+    ));
+  }, [filters, filterButtonHandler, games])();
 
   return (
-    <AppScaffold>
+    <PageContainer>
       <Text style={{ ...globalStyles.titlePage }}>Recent Games</Text>
       <Text>Filters</Text>
       <ScrollView
-        style={{ minWidth: '100%' }}
+        style={{ minWidth: "100%", minHeight: 70 }}
         contentContainerStyle={styles.filterButtonsRow}
         horizontal
       >
         {filterButtonsElements}
       </ScrollView>
-      <View style={{ height: "75%" }}>
-        <RecentGamesComponent />
-      </View>
-    </AppScaffold>
+      <RecentGamesComponent />
+    </PageContainer>
   );
 };
 
