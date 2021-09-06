@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Text, StyleSheet, ScrollView } from "react-native";
 
-import AppScaffold from "../layout/AppScaffold";
 import { globalStyles } from "../styles/global.style";
 import GameOutlineButton from "../components/GameOutlineButton";
 import { useAppSelector, useAppDispatch } from "../hooks/hooks";
@@ -14,6 +13,7 @@ import {
 import Game from "../models/Game";
 import RecentGamesComponent from "../components/RecentGamesComponent";
 import PageContainer from "../layout/PageContainer";
+
 const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
   const games = useAppSelector(selectAvailableGames) as Array<Game>;
@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
 
   return (
     <PageContainer>
-      <Text style={{ ...globalStyles.titlePage }}>Recent Games</Text>
+      <Text style={globalStyles.titlePage}>Recent Games</Text>
       <Text>Filters</Text>
       <ScrollView
         style={{ minWidth: "100%", minHeight: 70 }}
