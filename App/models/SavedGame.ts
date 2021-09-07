@@ -22,6 +22,8 @@ export default class SavedGame {
 
     if (createdAt) {
       this.createdAt = new Date(createdAt as string);
+    } else {
+      this.createdAt = new Date();
     }
   }
 
@@ -43,7 +45,7 @@ export default class SavedGame {
     };
   }
 
-  getCreatedAt(): String {
+  getCreatedAt(): string {
     if (this.createdAt) {
       const dd = String(this.createdAt.getUTCDate()).padStart(2, "0");
       const mm = String(this.createdAt.getUTCMonth() + 1).padStart(2, "0"); //January is 0!
