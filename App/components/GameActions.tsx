@@ -11,6 +11,7 @@ import {
 } from "../store/gamesSlice";
 
 import { Button } from "react-native-paper";
+import { appColors } from "../styles/appTheme";
 
 const GameActions: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -56,23 +57,68 @@ const GameActions: React.FC = () => {
     <View style={styles.gameActionsRow}>
       <Button
         mode="outlined"
+        contentStyle={{
+          padding: 0,
+          borderColor: appColors.primary,
+          margin: 0,
+        }}
+        labelStyle={{
+          padding: 0,
+          color: appColors.primary,
+          margin: 0,
+        }}
+        style={{
+          borderWidth: 2,
+          borderRadius: 45,
+          borderColor: appColors.primary,
+          backgroundColor: appColors.background,
+          padding: 0,
+          margin: 0,
+        }}
         uppercase={false}
         onPress={completeGameButtonHandler}
       >
-        <Text>Complete Game</Text>
+        <Text>Complete</Text>
       </Button>
       <Button
         mode="outlined"
         uppercase={false}
+        style={{
+          backgroundColor: appColors.background,
+          borderWidth: 2,
+          borderRadius: 45,
+          borderColor: appColors.primary,
+          padding: 0,
+          margin: 0,
+        }}
+        labelStyle={{
+          color: appColors.primary,
+        }}
         onPress={clearGameButtonHandler}
       >
-        <Text>Clear Game</Text>
+        <Text>Clear</Text>
       </Button>
 
       <Button
         mode="contained"
         uppercase={false}
         icon="cart-outline"
+        contentStyle={{
+          padding: 0,
+          margin: 0,
+        }}
+        labelStyle={{
+          padding: 0,
+          margin: 0,
+          color: appColors.background,
+        }}
+        style={{
+          borderWidth: 2,
+          borderRadius: 45,
+          borderColor: appColors.primary,
+          padding: 0,
+          margin: 0,
+        }}
         onPress={addToCartButtonHandler}
       >
         <Text>Add to cart</Text>
@@ -83,10 +129,11 @@ const GameActions: React.FC = () => {
 
 const styles = StyleSheet.create({
   gameActionsRow: {
+    width: "100%",
     flexDirection: "row",
-    wrap: "wrap",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: 8,
   },
 });
 
