@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
-import { Text, StyleSheet, ScrollView } from "react-native";
-
+import { StyleSheet, ScrollView } from "react-native";
+import { Text } from "react-native-paper";
 import { globalStyles } from "../styles/global.style";
 import GameOutlineButton from "../components/GameOutlineButton";
 import { useAppSelector, useAppDispatch } from "../hooks/hooks";
@@ -52,7 +52,14 @@ const HomePage: React.FC = () => {
   return (
     <PageContainer>
       <Text style={globalStyles.titlePage}>Recent Games</Text>
-      <Text>Filters</Text>
+      <Text
+        style={{
+          fontStyle: "italic",
+          marginTop: 8,
+        }}
+      >
+        Filters
+      </Text>
       <ScrollView
         style={{ minWidth: "100%", minHeight: 70 }}
         contentContainerStyle={styles.filterButtonsRow}
