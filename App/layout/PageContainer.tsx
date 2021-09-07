@@ -1,11 +1,16 @@
 import React from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
 import { appColors } from "../styles/appTheme";
-const PageContainer: React.FC = (props) => {
-  return (
+const PageContainer: React.FC<{ needsScroll?: boolean }> = ({
+  needsScroll = true,
+  children,
+}) => {
+  return needsScroll ? (
     <ScrollView contentContainerStyle={styles.appContent}>
-      {props.children}
+      {children}
     </ScrollView>
+  ) : (
+    <View style={styles.appContent}>{children}</View>
   );
 };
 
@@ -14,21 +19,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: appColors.background,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "white",
-  },
-  appBar: {
-    paddingVertical: 5,
-    paddingHorizontal: 16,
-  },
   appContent: {
-    marginTop: 20,
-    marginBottom: 0,
+    backgroundColor: appColors.background,
+    paddingTop: 16,
     paddingBottom: 50,
-    marginHorizontal: 16,
+    paddingHorizontal: 16,
   },
 });
 
