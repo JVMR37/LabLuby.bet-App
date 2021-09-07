@@ -192,7 +192,9 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(REHYDRATE, (state, action: any) => {
-      ApiDatasource.Instance.setToken(action.payload.auth.userToken!);
+      if (action.payload) {
+        ApiDatasource.Instance.setToken(action.payload.auth.userToken!);
+      }
     });
 
     builder.addCase(login.pending, (state, action) => {
