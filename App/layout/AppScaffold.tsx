@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet, Text } from "react-native";
 import LogoComponent from "../components/LogoComponent";
 import { IconButton } from "react-native-paper";
-import { useAppDispatch } from "../hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { useMountEffect } from "../hooks/use-mount-effect";
 import { logout } from "../store/authSlice";
 import { loadGames, loadSavedBets } from "../store/gamesSlice";
@@ -15,27 +15,20 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomePage from "../pages/HomePage";
 import GamePage from "../pages/GamePage";
 import AccountPage from "../pages/AccountPage";
+import CartComponent from "../components/CartComponent";
+import {
+  selectCartItens,
+  selectShowCartValue,
+  showCartToggle,
+} from "../store/cartSlice";
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
-const AppScaffold: React.FC = (props) => {
+const AppScaffold: React.FC = () => {
   const dispatch = useAppDispatch();
+  const cartItens = useAppSelector(selectCartItens);
+
+  const showCart = useAppSelector(selectShowCartValue);
 
   useMountEffect(() => {
     dispatch(loadGames());
@@ -46,26 +39,46 @@ const AppScaffold: React.FC = (props) => {
     dispatch(logout());
   };
 
+  const cartButtonHandler = () => {
+    dispatch(showCartToggle());
+  };
+
   return (
     <SafeAreaView style={styles.container} key={"AppScaffold"}>
       <StatusBar style={"auto"} backgroundColor={"white"} />
-      <View
-        style={{
-          ...styles.row,
-          ...styles.appBar,
-        }}
-      >
-        <LogoComponent fontSize={28} />
-        <IconButton
-          icon="logout"
-          color={appColors.secondary}
-          onPress={logoutButtonHandler}
-        ></IconButton>
-      </View>
-      {/* <ScrollView contentContainerStyle={styles.appContent}> */}
       <Tab.Navigator
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
+          header: (props) => (
+            <View
+              style={{
+                ...styles.row,
+                ...styles.appBar,
+              }}
+            >
+              <LogoComponent fontSize={28} />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {props.route.name === "Game" && cartItens.length > 0 && (
+                  <IconButton
+                    icon="cart-outline"
+                    color={appColors.primary}
+                    onPress={cartButtonHandler}
+                  ></IconButton>
+                )}
+
+                <IconButton
+                  icon="logout"
+                  color={appColors.secondary}
+                  onPress={logoutButtonHandler}
+                ></IconButton>
+              </View>
+            </View>
+          ),
         }}
         tabBar={(props) => <NavigationBar {...props} />}
       >
@@ -73,7 +86,7 @@ const AppScaffold: React.FC = (props) => {
         <Tab.Screen name="Game" component={GamePage} />
         <Tab.Screen name="Account" component={AccountPage} />
       </Tab.Navigator>
-      {/* </ScrollView> */}
+      {showCart && <CartComponent />}
     </SafeAreaView>
   );
 };
@@ -82,10 +95,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: appColors.background,
-
-    // marginTop: StatusBar.currentHeight,
   },
   row: {
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -96,6 +108,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   appContent: {
+    backgroundColor: appColors.background,
     marginTop: 20,
     marginBottom: 0,
     paddingBottom: 50,
