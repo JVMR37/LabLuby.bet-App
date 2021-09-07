@@ -4,6 +4,7 @@ import SavedGame from "../models/SavedGame";
 
 export interface CartState {
   items: Array<SavedGame>;
+  showCart: boolean;
   minCartValue: number;
   totalPrice: number;
 }
@@ -12,6 +13,7 @@ const initialState: CartState = {
   items: [],
   minCartValue: 0,
   totalPrice: 0,
+  showCart: false,
 };
 
 const cartSlice = createSlice({
@@ -48,13 +50,18 @@ const cartSlice = createSlice({
     setMinCartValue: (state, action: PayloadAction<number>) => {
       state.minCartValue = action.payload;
     },
+    
+    showCartToggle: (state) => {
+      state.showCart = !state.showCart;
+    },
   },
 });
 
-export const { addItem, removeItem, clearCart } = cartSlice.actions;
+export const { addItem, removeItem, clearCart, showCartToggle } =
+  cartSlice.actions;
 
 export const selectCartItens = (state: RootState) => state.cart.items;
 export const selectCartTotalPrice = (state: RootState) => state.cart.totalPrice;
 export const selectMinCartValue = (state: RootState) => state.cart.minCartValue;
-
+export const selectShowCartValue = (state: RootState) => state.cart.showCart;
 export default cartSlice.reducer;
