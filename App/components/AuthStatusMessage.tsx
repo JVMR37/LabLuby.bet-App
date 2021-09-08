@@ -28,9 +28,11 @@ const AuthStatusMessage: React.FC<{ status: AuthStatus }> = (props) => {
     <Text
       style={{
         textAlign: "center",
+        fontSize: 18,
         fontWeight: "bold",
         fontStyle: "italic",
         color,
+        marginVertical: 18
       }}
     >
       {props.children}
