@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import LogoComponent from "../components/LogoComponent";
 import Card from "../layout/Card";
@@ -20,8 +20,11 @@ import {
 } from "../store/authSlice";
 
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import ErrorInputText from "../components/ErrorInputText";
+import AuthStatusMessage from "../components/AuthStatusMessage";
 
 const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [isObscure, setObscureValue] = useState(true);
   const {
     value: emailValue,
     isValid: emailIsValid,
@@ -44,6 +47,52 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
   const authStatus = useAppSelector(selectAuthStatusValue);
 
   const formIsValid = passIsValid && emailIsValid;
+
+  const content = useCallback(() => {
+    switch (authStatus) {
+      case AuthStatus.Loading:
+        return (
+          <AuthStatusMessage key="Loading Message" status={authStatus}>
+            Loading...
+          </AuthStatusMessage>
+        );
+      case AuthStatus.Error:
+        return (
+          <AuthStatusMessage key="Error Message" status={authStatus}>
+            Error when logging in : (
+          </AuthStatusMessage>
+        );
+      case AuthStatus.IDLE:
+      default:
+        return (
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <Button
+              onPress={submitHandler}
+              disabled={!formIsValid}
+              icon="arrow-right"
+              uppercase={false}
+              style={{
+                marginVertical: 16,
+              }}
+              labelStyle={{
+                fontSize: 32,
+                fontWeight: "bold",
+                fontStyle: "italic",
+              }}
+              contentStyle={{
+                flexDirection: "row-reverse",
+              }}
+            >
+              <Text>Log In</Text>
+            </Button>
+          </View>
+        );
+    }
+  }, [authStatus, formIsValid])();
 
   const submitHandler = async () => {
     if (!formIsValid) {
@@ -74,6 +123,10 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
           onChangeText={emailChangeHandler}
         />
 
+        {emailHasError && (
+          <ErrorInputText>Please enter a valid email address.</ErrorInputText>
+        )}
+
         <TextInput
           label="Password"
           value={passValue}
@@ -82,8 +135,18 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
           onBlur={passBlurHandler}
           secureTextEntry
           style={globalStyles.textInput}
-          right={<TextInput.Icon name="eye" />}
+          right={
+            <TextInput.Icon
+              name={isObscure ? "eye-off-outline" : "eye-outline"}
+              onPress={() => setObscureValue(!isObscure)}
+            />
+          }
         />
+
+        {passHasError && (
+          <ErrorInputText>Please enter a valid password.</ErrorInputText>
+        )}
+
         <View
           style={{
             marginVertical: 8,
@@ -111,27 +174,12 @@ const LoginPage: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         <View
           style={{
-            alignItems: "center",
+            width: "100%",
+            marginHorizontal: 16,
+            marginVertical: 8,
           }}
         >
-          <Button
-            onPress={submitHandler}
-            icon="arrow-right"
-            uppercase={false}
-            style={{
-              marginVertical: 16,
-            }}
-            labelStyle={{
-              fontSize: 32,
-              fontWeight: "bold",
-              fontStyle: "italic",
-            }}
-            contentStyle={{
-              flexDirection: "row-reverse",
-            }}
-          >
-            <Text>Log In</Text>
-          </Button>
+          {content}
         </View>
       </Card>
       <Button
