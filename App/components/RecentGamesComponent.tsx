@@ -4,6 +4,7 @@ import { useAppSelector } from "../hooks/hooks";
 import SavedGame from "../models/SavedGame";
 import { getSavedGames } from "../store/gamesSlice";
 import { appColors } from "../styles/appTheme";
+import GameItem from "./GameItem";
 import GamePagination from "./GamePagination";
 
 const RecentGamesComponent: React.FC = () => {
@@ -21,7 +22,6 @@ const RecentGamesComponent: React.FC = () => {
             style={{
               ...styles.noGameText,
               fontWeight: "bold",
-              textTransform: "uppercase",
             }}
           >
             Change the filter or add a new bet
@@ -31,20 +31,14 @@ const RecentGamesComponent: React.FC = () => {
     }
 
     return savedGames.map((game) => (
-      <View
+      <GameItem
         key={game.id}
-        style={{ ...styles.gameView, borderColor: game.betType.color }}
-      >
-        <Text style={styles.numbersText}>{game.numbers.join(", ") + "."}</Text>
-        <View style={styles.gamePriceRow}>
-          <Text style={styles.datePriceText}>
-            {game.getCreatedAt()} - R${game.price.toFixed(2)}
-          </Text>
-        </View>
-        <Text style={{ ...styles.nameGameText, color: game.betType.color }}>
-          {game.betType.type}
-        </Text>
-      </View>
+        gameColor={game.betType.color}
+        gameDate={game.getCreatedAt()}
+        gameName={game.betType.type}
+        gamePrice={game.price}
+        selectedNumbers={game.numbers.join(", ") + "."}
+      />
     ));
   }, [savedGames])();
 
@@ -57,12 +51,13 @@ const RecentGamesComponent: React.FC = () => {
 
 const styles = StyleSheet.create({
   noGamesView: {
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: "100%",
+    minHeight: "60%",
   },
   noGameText: {
+    textAlign: "center",
     width: "100%",
     color: appColors.secondary,
   },
