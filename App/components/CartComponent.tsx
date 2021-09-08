@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,8 @@ import {
   Animated,
   StatusBar,
   ScrollView,
+  Alert,
 } from "react-native";
-import {} from "expo-status-bar";
 import { Button, IconButton } from "react-native-paper";
 import { appColors } from "../styles/appTheme";
 import {
@@ -15,17 +15,24 @@ import {
   selectCartItens,
   selectCartTotalPrice,
   selectMinCartValue,
-  showCartToggle,
+  setShowCartValue,
 } from "../store/cartSlice";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CartItemComponent from "../components/CartItemComponent";
 import { loadSavedBets, saveBets } from "../store/gamesSlice";
+import { useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { Swipeable } from "react-native-gesture-handler";
 
 const CartComponent: React.FC = () => {
+  const navigation = useNavigation<BottomTabNavigationProp<any, any>>();
+
   const dispatch = useAppDispatch();
+  const swipeRef = useRef<Swipeable>(null);
+
   const closeButtonHandler = () => {
-    dispatch(showCartToggle());
+    dispatch(setShowCartValue(false));
   };
 
   const cartItens = useAppSelector(selectCartItens);
@@ -53,7 +60,14 @@ const CartComponent: React.FC = () => {
         );
       });
     } else {
-      return <Text>There are no games added to the cart : (</Text>;
+      return <Text
+      style={{
+        marginHorizontal: 16,
+        marginVertical: 32,
+        fontSize: 16,
+        textAlign: "center"
+      }}
+      >There are no games added to the cart : (</Text>;
     }
   }, [cartItens])();
 
@@ -62,134 +76,152 @@ const CartComponent: React.FC = () => {
 
     if (result.meta.requestStatus === "fulfilled") {
       dispatch(clearCart());
+      dispatch(setShowCartValue(false));
       dispatch(loadSavedBets({ page: 1 }));
+      navigation.navigate("Home");
 
-      //TODO: Faça alçgo aqui
+      Alert.alert(
+        "Successfully saved games!",
+        "Check out your new games on the home page"
+      );
     } else {
-      //TODO: Faça algo aqui
+      Alert.alert("Something went wrong : (");
     }
   }, [cartItens, dispatch]);
 
   return (
     <Animated.View style={styles.cartOverlay}>
-      <View style={styles.cartContainer}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          <IconButton
-            icon="close"
-            color={appColors.primary}
-            onPress={closeButtonHandler}
-          ></IconButton>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginHorizontal: 16,
-          }}
-        >
-          <MaterialCommunityIcons
-            name="cart-outline"
-            size={32}
-            color={appColors.primary}
-          />
-          <Text
+      <Swipeable
+        ref={swipeRef}
+        renderLeftActions={() => (
+          <View
             style={{
-              fontWeight: "bold",
-              fontSize: 32,
-              color: appColors.secondary,
-              fontStyle: "italic",
+              width: 5,
+            }}
+          ></View>
+        )}
+        onSwipeableLeftWillOpen={() => dispatch(setShowCartValue(false))}
+      >
+        <View style={styles.cartContainer}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
             }}
           >
-            CART
-          </Text>
-        </View>
-        <ScrollView>{cartContent}</ScrollView>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginHorizontal: 16,
-          }}
-        >
-          <Text
+            <IconButton
+              icon="close"
+              color={appColors.primary}
+              onPress={closeButtonHandler}
+            ></IconButton>
+          </View>
+          <View
             style={{
-              fontWeight: "bold",
-              fontStyle: "italic",
-              fontSize: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              marginHorizontal: 16,
             }}
           >
-            {"CART "}
+            <MaterialCommunityIcons
+              name="cart-outline"
+              size={32}
+              color={appColors.primary}
+            />
             <Text
               style={{
-                fontWeight: "normal",
+                fontWeight: "bold",
+                fontSize: 32,
+                color: appColors.secondary,
+                fontStyle: "italic",
+              }}
+            >
+              CART
+            </Text>
+          </View>
+          <ScrollView>{cartContent}</ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginHorizontal: 16,
+              marginVertical: 16,
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontStyle: "italic",
                 fontSize: 16,
               }}
             >
-              {"TOTAL"}
-            </Text>
-          </Text>
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 16,
-            }}
-          >
-            R$ {cartTotalPrice.toFixed(2)}
-            {showWarning && (
+              {"CART "}
               <Text
                 style={{
-                  color: appColors.error,
+                  fontWeight: "normal",
+                  fontSize: 16,
                 }}
               >
-                *
+                {"TOTAL"}
               </Text>
-            )}
-          </Text>
-        </View>
-        {showWarning && (
-          <Text
+            </Text>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 16,
+              }}
+            >
+              R$ {cartTotalPrice.toFixed(2)}
+              {showWarning && (
+                <Text
+                  style={{
+                    color: appColors.error,
+                  }}
+                >
+                  *
+                </Text>
+              )}
+            </Text>
+          </View>
+          {showWarning && (
+            <Text
+              style={{
+                textAlign: "center",
+                marginVertical: 8,
+                marginHorizontal: 16,
+                color: appColors.error,
+                flexWrap: "wrap",
+              }}
+            >
+              *Cart must be at least R${minCartTotalPrice.toFixed(2)} to save
+            </Text>
+          )}
+
+          <Button
+            mode="contained"
+            icon="arrow-right"
+            disabled={showWarning}
+            uppercase={false}
             style={{
-              textAlign: "center",
-              marginVertical: 8,
-              marginHorizontal: 16,
-              color: appColors.error,
-              flexWrap: "wrap",
+              borderRadius: 0,
+              backgroundColor: "#f4f4f4",
+            }}
+            onPress={saveButtonHandler}
+            contentStyle={{
+              paddingVertical: 32,
+              borderRadius: 0,
+              flexDirection: "row-reverse",
+            }}
+            labelStyle={{
+              fontSize: 32,
+              fontStyle: "italic",
+              color: appColors.primary,
             }}
           >
-            *Cart must be at least R${minCartTotalPrice.toFixed(2)} to save
-          </Text>
-        )}
-
-        <Button
-          mode="contained"
-          icon="arrow-right"
-          disabled={showWarning}
-          uppercase={false}
-          style={{
-            borderRadius: 0,
-            backgroundColor: "#f4f4f4",
-          }}
-          onPress={saveButtonHandler}
-          contentStyle={{
-            paddingVertical: 32,
-            borderRadius: 0,
-            flexDirection: "row-reverse",
-          }}
-          labelStyle={{
-            fontSize: 32,
-            fontStyle: "italic",
-            color: appColors.primary,
-          }}
-        >
-          <Text>Save</Text>
-        </Button>
-      </View>
+            <Text>Save</Text>
+          </Button>
+        </View>
+      </Swipeable>
     </Animated.View>
   );
 };
@@ -202,11 +234,16 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "#ffffffcc",
+    minWidth: "100%",
+    minHeight: "100%",
+    justifyContent: "flex-end",
     alignItems: "flex-end",
   },
   cartContainer: {
+    alignSelf: "flex-end",
     height: "100%",
-    width: "70%",
+    minWidth: "85%",
+    width: "85%",
     backgroundColor: "#fff",
     paddingTop: StatusBar.currentHeight,
     borderRadius: 13,
