@@ -194,6 +194,8 @@ export const authSlice = createSlice({
     builder.addCase(REHYDRATE, (state, action: any) => {
       if (action.payload) {
         ApiDatasource.Instance.setToken(action.payload.auth.userToken!);
+      } else {
+        state = initialState;
       }
     });
 
