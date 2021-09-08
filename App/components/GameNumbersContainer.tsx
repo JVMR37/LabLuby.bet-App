@@ -1,15 +1,12 @@
-import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import React, { useCallback } from "react";
+import { Alert, FlatList, StyleSheet } from "react-native";
 import { useAppSelector, useAppDispatch } from "../hooks/hooks";
 import Game from "../models/Game";
 import {
   selectNumber,
   getSelectedNumbers,
-  getSelectedGame,
   removeNumber,
 } from "../store/gamesSlice";
-import { appColors } from "../styles/appTheme";
 import GameNumberButton from "./GameNumberButton";
 
 const GameNumbersContainer: React.FC<{
@@ -23,7 +20,10 @@ const GameNumbersContainer: React.FC<{
       if (selectedNumbers.some((number) => number === clickedNumber)) {
         dispatch(removeNumber(clickedNumber));
       } else if (selectedNumbers.length === props.game.maxNumber) {
-        //TODO: Show alert here
+        Alert.alert(
+          "Quantidade máxima de seleção foi atingida",
+          "Desmarque um número para poder selecionar outro. Ou use o botão 'Clear' e selecione novos números."
+        );
       } else {
         dispatch(selectNumber(clickedNumber));
       }
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   numbersContainer: {
     width: "100%",
     alignItems: "stretch",
-    paddingBottom: 'auto',
+    paddingBottom: 48,
   },
 });
 export default GameNumbersContainer;
