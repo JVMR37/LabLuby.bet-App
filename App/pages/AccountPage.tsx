@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import ErrorInputText from "../components/ErrorInputText";
@@ -6,6 +6,7 @@ import UpdateStatusMessage from "../components/UpdateStatusMessage";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import useInput from "../hooks/use-input";
 import { useMountEffect } from "../hooks/use-mount-effect";
+import Card from "../layout/Card";
 import PageContainer from "../layout/PageContainer";
 import {
   selectUpdateStatusValue,
@@ -14,10 +15,11 @@ import {
   updateUpdateStatusAfterTime,
   updateUserData,
 } from "../store/authSlice";
+import { appColors } from "../styles/appTheme";
 import { globalStyles } from "../styles/global.style";
 import { emailValidator, isNotEmptyValidator } from "../utils/validators";
 
-const GamePage: React.FC = () => {
+const GamePage: React.FC<{ navigation: any }> = (props: any) => {
   const userData = useAppSelector(selectUserData);
   const dispatch = useAppDispatch();
 
@@ -54,7 +56,7 @@ const GamePage: React.FC = () => {
     if (!formIsValid) {
       return;
     }
-
+    
     const result = await dispatch(
       updateUserData({
         userId: userData.id!,
@@ -66,15 +68,14 @@ const GamePage: React.FC = () => {
     if (result.meta.requestStatus === "fulfilled") {
       dispatch(updateUpdateStatusAfterTime(UpdateStatus.IDLE));
       setTimeout(() => {
-        resetName();
-        resetEmail();
+        props.navigation.navigate("Home");
       }, 2000);
     }
 
     console.log("Submitted!");
   };
 
-  const content = useCallback(() => {
+  const content = useMemo(() => {
     switch (updateStatus) {
       case UpdateStatus.Loading:
         return (
@@ -124,48 +125,54 @@ const GamePage: React.FC = () => {
           </View>
         );
     }
-  }, [updateStatus, formIsValid])();
+  }, [updateStatus, formIsValid, nameValue, emailValue]);
 
   return (
     <PageContainer>
       <Text style={globalStyles.titlePage}>Account</Text>
-
-      <TextInput
-        label="Name"
-        value={nameValue}
-        error={nameHasError}
-        onBlur={nameBlurHandler}
-        mode="flat"
-        style={globalStyles.textInput}
-        onChangeText={nameChangeHandler}
-      />
-
-      {nameHasError && (
-        <ErrorInputText>Please enter a valid name.</ErrorInputText>
-      )}
-
-      <TextInput
-        label="Email"
-        value={emailValue}
-        error={emailHasError}
-        onBlur={emailBlurHandler}
-        mode="flat"
-        style={globalStyles.textInput}
-        onChangeText={emailChangeHandler}
-      />
-
-      {emailHasError && (
-        <ErrorInputText>Please enter a valid email address.</ErrorInputText>
-      )}
-
       <View
         style={{
-          width: "100%",
-          marginHorizontal: 16,
-          marginVertical: 8,
+          alignItems: "center",
+          marginTop: 16,
         }}
       >
-        {content}
+        <Card>
+          <TextInput
+            label="Name"
+            value={nameValue}
+            error={nameHasError}
+            onBlur={nameBlurHandler}
+            mode="flat"
+            style={globalStyles.textInput}
+            onChangeText={nameChangeHandler}
+          />
+
+          {nameHasError && (
+            <ErrorInputText>Please enter a valid name.</ErrorInputText>
+          )}
+
+          <TextInput
+            label="Email"
+            value={emailValue}
+            error={emailHasError}
+            onBlur={emailBlurHandler}
+            mode="flat"
+            style={globalStyles.textInput}
+            onChangeText={emailChangeHandler}
+          />
+
+          {emailHasError && (
+            <ErrorInputText>Please enter a valid email address.</ErrorInputText>
+          )}
+
+          <View
+            style={{
+              width: "100%",
+            }}
+          >
+            {content}
+          </View>
+        </Card>
       </View>
     </PageContainer>
   );
