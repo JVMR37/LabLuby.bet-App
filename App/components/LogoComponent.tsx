@@ -14,7 +14,7 @@ const LogoComponent: React.FC<{ fontSize?: number }> = (props) => {
       >
         TGL
       </LogoTextStyled>
-      <LogoLine />
+      <LogoLine style={props.fontSize ? { width: props.fontSize * 2 } : null} />
     </LogoContainer>
   );
 };
