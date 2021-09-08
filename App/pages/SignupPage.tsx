@@ -104,31 +104,25 @@ const SignupPage: React.FC<{ navigation: any }> = ({ navigation }) => {
       case AuthStatus.IDLE:
       default:
         return (
-          <View
+          <Button
+            onPress={submitHandler}
+            icon="arrow-right"
+            disabled={!formIsValid}
+            uppercase={false}
             style={{
-              alignItems: "center",
+              marginVertical: 16,
+            }}
+            labelStyle={{
+              fontSize: 32,
+              fontWeight: "bold",
+              fontStyle: "italic",
+            }}
+            contentStyle={{
+              flexDirection: "row-reverse",
             }}
           >
-            <Button
-              onPress={submitHandler}
-              icon="arrow-right"
-              disabled={!formIsValid}
-              uppercase={false}
-              style={{
-                marginVertical: 16,
-              }}
-              labelStyle={{
-                fontSize: 32,
-                fontWeight: "bold",
-                fontStyle: "italic",
-              }}
-              contentStyle={{
-                flexDirection: "row-reverse",
-              }}
-            >
-              <Text>Sign Up</Text>
-            </Button>
-          </View>
+            <Text>Sign Up</Text>
+          </Button>
         );
     }
   }, [authStatus, formIsValid])();
@@ -164,7 +158,7 @@ const SignupPage: React.FC<{ navigation: any }> = ({ navigation }) => {
           error={passHasError}
           onChangeText={passChangeHandler}
           onBlur={passBlurHandler}
-          secureTextEntry
+          secureTextEntry={isObscure}
           style={globalStyles.textInput}
           right={
             <TextInput.Icon
