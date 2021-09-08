@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
   },
   appContent: {
     backgroundColor: appColors.background,
+    minHeight: '100%',
     paddingTop: 16,
     paddingBottom: 50,
     paddingHorizontal: 16,
