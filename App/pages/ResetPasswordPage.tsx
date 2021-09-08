@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useCallback } from "react";
 import { Text, View } from "react-native";
 import LogoComponent from "../components/LogoComponent";
 import Card from "../layout/Card";
@@ -12,6 +12,15 @@ import Footer from "../layout/footer";
 import AuthPagesContainer from "../layout/AuthPageContainer";
 import useInput from "../hooks/use-input";
 import { emailValidator } from "../utils/validators";
+import ErrorInputText from "../components/ErrorInputText";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import {
+  AuthStatus,
+  selectAuthStatusValue,
+  sendLinkToResetPass,
+  updateAuthStatusAfterTime,
+} from "../store/authSlice";
+import AuthStatusMessage from "../components/AuthStatusMessage";
 
 const ResetPasswordPage: React.FC<{ navigation: any }> = ({ navigation }) => {
   const {
@@ -22,6 +31,82 @@ const ResetPasswordPage: React.FC<{ navigation: any }> = ({ navigation }) => {
     inputBlurHandler: emailBlurHandler,
     reset: resetEmail,
   } = useInput(emailValidator);
+
+  const dispatch = useAppDispatch();
+  const authStatus = useAppSelector(selectAuthStatusValue);
+
+  const content = useCallback(() => {
+    switch (authStatus) {
+      case AuthStatus.Loading:
+        return (
+          <AuthStatusMessage key="Loading Message" status={authStatus}>
+            Loading...
+          </AuthStatusMessage>
+        );
+      case AuthStatus.Error:
+        return (
+          <AuthStatusMessage key="Error Message" status={authStatus}>
+            Failed to send link : (
+          </AuthStatusMessage>
+        );
+      case AuthStatus.Success:
+        return (
+          <AuthStatusMessage key="Success Message" status={authStatus}>
+            Link sent successfully :)
+          </AuthStatusMessage>
+        );
+      case AuthStatus.IDLE:
+      default:
+        return (
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <Button
+              onPress={submitHandler}
+              icon="arrow-right"
+              uppercase={false}
+              disabled={!emailIsValid}
+              style={{
+                marginVertical: 16,
+              }}
+              labelStyle={{
+                fontSize: 32,
+                fontWeight: "bold",
+                fontStyle: "italic",
+              }}
+              contentStyle={{
+                flexDirection: "row-reverse",
+              }}
+            >
+              <Text>Send Link</Text>
+            </Button>
+          </View>
+        );
+    }
+  }, [authStatus, emailIsValid])();
+
+  const submitHandler = async () => {
+    if (!emailIsValid) {
+      return;
+    }
+
+    const result = await dispatch(sendLinkToResetPass(emailValue));
+
+    dispatch(updateAuthStatusAfterTime(AuthStatus.IDLE));
+
+    if (result.meta.requestStatus === "fulfilled") {
+      setTimeout(() => {
+        resetEmail();
+        navigation.pop();
+      }, 2000);
+    }
+
+    console.log("Submitted!");
+
+    resetEmail();
+  };
 
   return (
     <AuthPagesContainer>
@@ -38,29 +123,18 @@ const ResetPasswordPage: React.FC<{ navigation: any }> = ({ navigation }) => {
           onChangeText={emailChangeHandler}
         />
 
+        {emailHasError && (
+          <ErrorInputText>Please enter a valid email address.</ErrorInputText>
+        )}
+
         <View
           style={{
-            alignItems: "center",
+            width: "100%",
+            marginHorizontal: 16,
+            marginVertical: 8,
           }}
         >
-          <Button
-            onPress={() => console.log("pressed")}
-            icon="arrow-right"
-            uppercase={false}
-            style={{
-              marginVertical: 16,
-            }}
-            labelStyle={{
-              fontSize: 32,
-              fontWeight: "bold",
-              fontStyle: "italic",
-            }}
-            contentStyle={{
-              flexDirection: "row-reverse",
-            }}
-          >
-            <Text>Send Link</Text>
-          </Button>
+          {content}
         </View>
       </Card>
       <View

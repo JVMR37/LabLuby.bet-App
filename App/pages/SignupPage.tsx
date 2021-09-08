@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { View, Text } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { globalStyles } from "../styles/global.style";
@@ -15,8 +15,20 @@ import {
   emailValidator,
   passValidator,
 } from "../utils/validators";
+import AuthStatusMessage from "../components/AuthStatusMessage";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import {
+  AuthStatus,
+  register,
+  selectAuthStatusValue,
+  updateAuthStatusAfterTime,
+} from "../store/authSlice";
 
 const SignupPage: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+  const [isObscure, setObscureValue] = useState(true);
+  const authStatus = useAppSelector(selectAuthStatusValue);
+
   const {
     value: nameValue,
     isValid: nameIsValid,
@@ -43,6 +55,83 @@ const SignupPage: React.FC<{ navigation: any }> = ({ navigation }) => {
     inputBlurHandler: passBlurHandler,
     reset: resetPass,
   } = useInput(passValidator);
+
+  const formIsValid = passIsValid && emailIsValid && nameIsValid;
+
+  const submitHandler = async () => {
+    if (!formIsValid) {
+      return;
+    }
+
+    const result = await dispatch(
+      register({ name: nameValue, email: emailValue, password: passValue })
+    );
+
+    dispatch(updateAuthStatusAfterTime(AuthStatus.IDLE));
+
+    if (result.meta.requestStatus === "fulfilled") {
+      setTimeout(() => {
+        resetName();
+        resetEmail();
+        resetPass();
+        navigation.pop();
+      }, 2000);
+    }
+
+    console.log("Submitted!");
+  };
+
+  const content = useCallback(() => {
+    switch (authStatus) {
+      case AuthStatus.Loading:
+        return (
+          <AuthStatusMessage key="Loading Message" status={authStatus}>
+            Loading...
+          </AuthStatusMessage>
+        );
+      case AuthStatus.Error:
+        return (
+          <AuthStatusMessage key="Error Message" status={authStatus}>
+            Failed to register : (
+          </AuthStatusMessage>
+        );
+      case AuthStatus.Success:
+        return (
+          <AuthStatusMessage key="Success Message" status={authStatus}>
+            Successfully registered : )
+          </AuthStatusMessage>
+        );
+      case AuthStatus.IDLE:
+      default:
+        return (
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <Button
+              onPress={submitHandler}
+              icon="arrow-right"
+              disabled={!formIsValid}
+              uppercase={false}
+              style={{
+                marginVertical: 16,
+              }}
+              labelStyle={{
+                fontSize: 32,
+                fontWeight: "bold",
+                fontStyle: "italic",
+              }}
+              contentStyle={{
+                flexDirection: "row-reverse",
+              }}
+            >
+              <Text>Sign Up</Text>
+            </Button>
+          </View>
+        );
+    }
+  }, [authStatus, formIsValid])();
 
   return (
     <AuthPagesContainer>
@@ -73,36 +162,26 @@ const SignupPage: React.FC<{ navigation: any }> = ({ navigation }) => {
           label="Password"
           value={passValue}
           error={passHasError}
-          onBlur={passBlurHandler}
           onChangeText={passChangeHandler}
+          onBlur={passBlurHandler}
           secureTextEntry
           style={globalStyles.textInput}
-          right={<TextInput.Icon name="eye" />}
+          right={
+            <TextInput.Icon
+              name={isObscure ? "eye-off-outline" : "eye-outline"}
+              onPress={() => setObscureValue(!isObscure)}
+            />
+          }
         />
 
         <View
           style={{
-            alignItems: "center",
+            width: "100%",
+            marginHorizontal: 16,
+            marginVertical: 8,
           }}
         >
-          <Button
-            onPress={() => console.log("pressed")}
-            icon="arrow-right"
-            uppercase={false}
-            style={{
-              marginVertical: 16,
-            }}
-            labelStyle={{
-              fontSize: 32,
-              fontWeight: "bold",
-              fontStyle: "italic",
-            }}
-            contentStyle={{
-              flexDirection: "row-reverse",
-            }}
-          >
-            <Text>Sign Up</Text>
-          </Button>
+          {content}
         </View>
       </Card>
       <Button
