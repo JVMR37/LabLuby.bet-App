@@ -50,14 +50,14 @@ const cartSlice = createSlice({
     setMinCartValue: (state, action: PayloadAction<number>) => {
       state.minCartValue = action.payload;
     },
-    
-    showCartToggle: (state) => {
-      state.showCart = !state.showCart;
+
+    setShowCartValue: (state, action: PayloadAction<boolean>) => {
+      state.showCart = action.payload;
     },
   },
 });
 
-export const { addItem, removeItem, clearCart, showCartToggle } =
+export const { addItem, removeItem, clearCart, setShowCartValue } =
   cartSlice.actions;
 
 export const selectCartItens = (state: RootState) => state.cart.items;

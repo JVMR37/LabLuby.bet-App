@@ -19,7 +19,7 @@ import CartComponent from "../components/CartComponent";
 import {
   selectCartItens,
   selectShowCartValue,
-  showCartToggle,
+  setShowCartValue,
 } from "../store/cartSlice";
 
 const Tab = createBottomTabNavigator();
@@ -40,7 +40,7 @@ const AppScaffold: React.FC = () => {
   };
 
   const cartButtonHandler = () => {
-    dispatch(showCartToggle());
+    dispatch(setShowCartValue(!showCart));
   };
 
   return (
