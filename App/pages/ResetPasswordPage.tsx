@@ -58,34 +58,28 @@ const ResetPasswordPage: React.FC<{ navigation: any }> = ({ navigation }) => {
       case AuthStatus.IDLE:
       default:
         return (
-          <View
+          <Button
+            onPress={submitHandler}
+            icon="arrow-right"
+            uppercase={false}
+            disabled={!emailIsValid}
             style={{
-              alignItems: "center",
+              marginVertical: 16,
+            }}
+            labelStyle={{
+              fontSize: 32,
+              fontWeight: "bold",
+              fontStyle: "italic",
+            }}
+            contentStyle={{
+              flexDirection: "row-reverse",
             }}
           >
-            <Button
-              onPress={submitHandler}
-              icon="arrow-right"
-              uppercase={false}
-              disabled={!emailIsValid}
-              style={{
-                marginVertical: 16,
-              }}
-              labelStyle={{
-                fontSize: 32,
-                fontWeight: "bold",
-                fontStyle: "italic",
-              }}
-              contentStyle={{
-                flexDirection: "row-reverse",
-              }}
-            >
-              <Text>Send Link</Text>
-            </Button>
-          </View>
+            <Text>Send Link</Text>
+          </Button>
         );
     }
-  }, [authStatus, emailIsValid])();
+  }, [authStatus, emailIsValid, emailValue])();
 
   const submitHandler = async () => {
     if (!emailIsValid) {
@@ -114,6 +108,7 @@ const ResetPasswordPage: React.FC<{ navigation: any }> = ({ navigation }) => {
       <TitlePageComponent title="Reset password" />
       <Card>
         <TextInput
+          theme={{ colors: { primary: appColors.primary } }}
           label="Email"
           value={emailValue}
           error={emailHasError}
@@ -130,7 +125,6 @@ const ResetPasswordPage: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View
           style={{
             width: "100%",
-            marginHorizontal: 16,
             marginVertical: 8,
           }}
         >

@@ -28,11 +28,11 @@ const UpdateStatusMessage: React.FC<{ status: UpdateStatus }> = (props) => {
     <Text
       style={{
         textAlign: "center",
+        fontSize: 18,
         fontWeight: "bold",
         fontStyle: "italic",
-        fontSize: 32,
-        marginVertical: 16,
         color,
+        marginVertical: 18,
       }}
     >
       {props.children}

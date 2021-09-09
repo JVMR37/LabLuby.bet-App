@@ -1,16 +1,15 @@
 import React from "react";
 import { ScrollView, Dimensions } from "react-native";
+import { appColors } from "../styles/appTheme";
 
 const AuthPagesContainer: React.FC = (props) => {
-  const windowHeight = Dimensions.get("window").height;
-
   return (
     <ScrollView
       contentContainerStyle={{
-        backgroundColor: "#fff",
+        backgroundColor: appColors.background,
         alignItems: "center",
         justifyContent: "center",
-        minHeight: windowHeight,
+        minHeight: "100%",
       }}
     >
       {props.children}

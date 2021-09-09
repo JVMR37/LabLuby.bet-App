@@ -37,7 +37,8 @@ const GameNumbersContainer: React.FC<{
         marginTop: 16,
         alignContent: "space-between",
         minWidth: "100%",
-        maxHeight: "65%",
+        maxHeight: "62%",
+        marginBottom: 15,
       }}
       numColumns={5}
       contentContainerStyle={styles.numbersContainer}

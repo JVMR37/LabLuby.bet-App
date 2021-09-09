@@ -10,7 +10,10 @@ const PageContainer: React.FC<{ needsScroll?: boolean }> = ({
       {children}
     </ScrollView>
   ) : (
-    <View style={styles.appContent}>{children}</View>
+    <View style={{ ...styles.appContent, paddingBottom: 0, 
+    height: "101%" }}>
+      {children}
+    </View>
   );
 };
 
@@ -21,7 +24,7 @@ const styles = StyleSheet.create({
   },
   appContent: {
     backgroundColor: appColors.background,
-    minHeight: '100%',
+    minHeight: "100%",
     paddingTop: 16,
     paddingBottom: 50,
     paddingHorizontal: 16,

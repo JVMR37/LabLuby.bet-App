@@ -171,7 +171,6 @@ const SignupPage: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View
           style={{
             width: "100%",
-            marginHorizontal: 16,
             marginVertical: 8,
           }}
         >
